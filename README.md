@@ -7,8 +7,8 @@ This repository is created for personal practice purpose. I'll bring more mathem
 ## Finished
 ### ml_cf_svd.py 
 - Collaborate Filtering (for explicit scores)
-- SVD approach for recommending, optimized with gradient descent (for explicit scores)
-- SVD approach for recommending, optimized with ALS (for implicit scores)
+- SVD approach for recommending, solved with gradient descent (for explicit scores)
+- SVD approach for recommending, solved with ALS (for implicit scores)
 
 ### ml_decesion_trees.py
 All-in-one training, testing and plot functions for the 3 common DTS algorithms:
@@ -19,18 +19,18 @@ All-in-one training, testing and plot functions for the 3 common DTS algorithms:
 Missing values in both training and testing dataset will be handled automotically (broadcasting into all sub-branches to get weight results).
 
 ### ml_logistic_regression.py
-- basic logistic regression, optimized with CVX
-- L1 & L2 penalized logistic regression, optimized with CVX
+- basic logistic regression, solved with CVX
+- L1 & L2 penalized logistic regression, solved with CVX
 
 ### ml_svm.py
-SVM optimized with CVX for 3 kinds of kernels:
+SVM solved with CVX for 3 kinds of kernels:
 - linear kernel
 - gaussian kernel
 - polynomial kernel
 
 ## To-Do 
 ### ml_ann.py
-Neurual Network optimized with gradient descent based on Andrew Ng's course.
+Neurual Network solved with gradient descent based on Andrew Ng's course.
 
 ### ml_random_forrest.py
 Random Forrest based on ml_decision_trees.py
