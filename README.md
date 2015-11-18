@@ -1,6 +1,6 @@
-# algorithm_ml
+# ML Algorithms 常用机器学习算法原型代码练习 
 
-Prototype coding for common Machine Learning algorithms. 
+Prototype coding for common Machine Learning algorithms with Python 3. 
 
 This repository is created for personal practice purpose. I'll bring more mathematical brief behind the algorithms.
 
