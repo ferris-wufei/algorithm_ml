@@ -1,4 +1,4 @@
-# ML Algorithms 常用机器学习算法原型代码练习 
+# 常用机器学习算法原型代码 
 
 Prototype coding for common Machine Learning algorithms with Python 3. 
 
