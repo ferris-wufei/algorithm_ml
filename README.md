@@ -2,9 +2,9 @@
 
 Prototype coding for common Machine Learning algorithms. 
 
-This repository is created for practice purpose. I'll bring more mathematical brief behind the algorithms.
+This repository is created for personal practice purpose. I'll bring more mathematical brief behind the algorithms.
 
-## finished
+## Finished
 ### ml_cf_svd.py 
 - Collaborate Filtering (for explicit scores)
 - SVD approach for recommending, optimized with gradient descent (for explicit scores)
@@ -28,12 +28,15 @@ SVM optimized with CVX for 3 kinds of kernels:
 - gaussian kernel
 - polynomial kernel
 
-## to-do
+## To-Do 
 ### ml_ann.py
 Neurual Network optimized with gradient descent based on Andrew Ng's course.
 
 ### ml_random_forrest.py
+Random Forrest based on ml_decision_trees.py
 
 ### ml_boosting.py
+Boosting for regression and classification (adaboost)
 
 ### ml_cf_svd_plus.py
+Re-arrange ml_cf_svd.py, store CF and SVD methods separately.
