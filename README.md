@@ -55,10 +55,11 @@ Neural Networks solved with gradient descent based on Andrew Ng's course.
 Boosting for classification.
 
 ### 随机梯度加速器
-`ml_gbdt.py``
+`ml_gbdt.py`
 
 Boosting for regression.
 
 ### SVD++拆分 
 `ml_cf_svd_plus.py`
+
 Re-arrange ml_cf_svd.py, store CF and SVD methods separately.
