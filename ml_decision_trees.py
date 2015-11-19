@@ -20,6 +20,7 @@ To-Do:
 4. (Done)bug: 如果rows只有2个记录，且唯一的差别是当中一条的某个字段为空，一条非空，按照这个字段划分时, 会导致死循环
 
 """
+import numpy as np
 
 # sample data
 my_data = [['slashdot', 'USA', 'yes', 18, 'None'],
@@ -128,7 +129,7 @@ def divide3(rows, feature):
 
 # 训练函数
 def train(rows, threshold=0.0, algo="cart", target="classification",
-          feature_index="all"):
+          m=2, sample=False):
     """
     递归生长思路:
     1. 只要当前数据满足继续划分的条件, 即将划分的数据递归转移到下层节点继续划分,
@@ -136,18 +137,23 @@ def train(rows, threshold=0.0, algo="cart", target="classification",
     2. 每次划分的关键检查步骤: 当前数据的结果变量是否唯一, 如果唯一则没有必要划分; 当前特征的
     取值是否唯一, 如果唯一则无法继续划分.
     3. 终端节点直接返回数据集, 不计算结果
+    4. sample选项: 每次划分时, 从所有特征中随机选取m个特征的子集, 作为候选特征, 用于随机森林
 
     :param rows: 数据集
     :param threshold: 信息增益或RSS减少量阈值
     :param algo: 算法类型
     :param target: 回归 / 判别
-    :param feature_index: "all"表示对所有feature遍历; list / tuple 限定遍历范围
+    :param m: 限定遍历的随机特征数
+    :param sample: 是否抽样
     :return:
     """
     if not isinstance(rows, (set, list)):  # 参数异常处理
         return None
     if len(rows) == 0:
         return Node()
+    num_features = len(rows[0]) - 1
+    if m > num_features:
+        return None
 
     if len(countgen(rows)) <= 1:  # rows只有一种结果, 返回终端节点
         return Node(dataset=rows, target=target)
@@ -164,11 +170,11 @@ def train(rows, threshold=0.0, algo="cart", target="classification",
     best_sets = None
     best_cut = 0.0
 
-    if feature_index == "all":
-        num_features = len(rows[0]) - 1
+    if not sample:
         loop_index = range(num_features)
-    else:  # list / tuple 限定遍历的特征范围
-        loop_index = feature_index
+    else:
+        indices = np.random.choice(np.arange(num_features), size=m, replace=False)
+        loop_index = [int(i) for i in indices]  # 随机选取m个特征
 
     if algo == 'cart':  # cart划分
         for f in loop_index:  # 遍历特征
@@ -179,23 +185,23 @@ def train(rows, threshold=0.0, algo="cart", target="classification",
             if len(f_values) <= 1:  # 忽略取值唯一的特征
                 continue
             for value in f_values.keys():  # 遍历取值
-                tset, fset = divide2(rows, f, value)
-                if len(tset) == 0 or len(fset) == 0:
+                t_set, f_set = divide2(rows, f, value)
+                if len(t_set) == 0 or len(f_set) == 0:
                     continue  # 连续变量划分异常处理
                 if target == 'classification':  # 判别: 基尼系数
-                    p = float(len(tset)) / len(rows)
-                    diff = gini(rows) - p * gini(tset) - (1 - p) * gini(fset)
+                    p = float(len(t_set)) / len(rows)
+                    diff = gini(rows) - p * gini(t_set) - (1 - p) * gini(f_set)
                 else:  # 回归: 误差平方和
-                    diff = rss(rows) - rss(tset) - rss(fset)
+                    diff = rss(rows) - rss(t_set) - rss(f_set)
                 if diff > best_diff:  # 出现新的最佳划分, 更新追踪器
                     best_diff = diff
                     best_feature = f
                     best_cut = value
-                    best_sets = (tset, fset)
+                    best_sets = (t_set, f_set)
 
         if best_diff >= threshold and best_sets is not None:  # 应用最佳划分
-            t_branch = train(best_sets[0], threshold=threshold, algo=algo, target=target)
-            f_branch = train(best_sets[1], threshold=threshold, algo=algo, target=target)
+            t_branch = train(best_sets[0], threshold=threshold, algo=algo, target=target, m=m, sample=sample)
+            f_branch = train(best_sets[1], threshold=threshold, algo=algo, target=target, m=m, sample=sample)
             return Node(feature=best_feature, algo=algo, cut=best_cut, tb=t_branch, fb=f_branch, target=target)
         else:
             return Node(dataset=rows, target=target)  # 未找到feature, 或diff未达到划分标准
@@ -210,25 +216,25 @@ def train(rows, threshold=0.0, algo="cart", target="classification",
                 if len(f_values) <= 1:  # 忽略取值唯一的特征
                     continue
                 for value in f_values.keys():  # 遍历取值
-                    tset, fset = divide2(rows, f, value)
-                    if len(tset) ==0 or len(fset) == 0:
+                    t_set, f_set = divide2(rows, f, value)
+                    if len(t_set) ==0 or len(f_set) == 0:
                         continue
                     if algo == 'id3':
-                        diff = entropy(rows) - entropy(tset) * len(tset) / len(rows) -\
-                               entropy(fset) * len(fset) / len(rows)
+                        diff = entropy(rows) - entropy(t_set) * len(t_set) / len(rows) -\
+                               entropy(f_set) * len(f_set) / len(rows)
                     else:
                         base = 0.0
-                        for s in (tset, fset):
+                        for s in (t_set, f_set):
                             if len(s) > 0:
                                 base -= len(s) / len(rows) * log(len(s) / len(rows))
-                        diff = entropy(rows) - entropy(tset) * len(tset) / len(rows) -\
-                               entropy(fset) * len(fset) / len(rows)
+                        diff = entropy(rows) - entropy(t_set) * len(t_set) / len(rows) -\
+                               entropy(f_set) * len(f_set) / len(rows)
                         diff = diff / base
-                    if diff > best_diff and len(tset) > 0 and len(fset) > 0:  # 出现新的最佳划分, 更新追踪器
+                    if diff > best_diff and len(t_set) > 0 and len(f_set) > 0:  # 出现新的最佳划分, 更新追踪器
                         best_diff = diff
                         best_feature = f
                         best_cut = value
-                        best_sets = (tset, fset)
+                        best_sets = (t_set, f_set)
 
             else:  # 离散变量, 多分
                 f_values = {}
@@ -256,13 +262,15 @@ def train(rows, threshold=0.0, algo="cart", target="classification",
 
         if best_diff >= threshold:  # 使用最佳特征和划分点进行划分
             if isinstance(rows[0][best_feature], int) or isinstance(rows[0][best_feature], float):  # 连续变量递归
-                t_branch = train(best_sets[0], threshold=threshold, algo=algo, target=target)
-                f_branch = train(best_sets[1], threshold=threshold, algo=algo, target=target)
-                return Node(feature=best_feature, algo=algo, cut=best_cut, tb=t_branch, fb=f_branch, target=target)
+                t_branch = train(best_sets[0], threshold=threshold, algo=algo, target=target, m=m, sample=sample)
+                f_branch = train(best_sets[1], threshold=threshold, algo=algo, target=target, m=m, sample=sample)
+                return Node(feature=best_feature, algo=algo, cut=best_cut, tb=t_branch, fb=f_branch,
+                            target=target)
             else:  # 离散变量递归
                 sub_trees = {}
                 for k in best_sets.keys():
-                    sub_trees.setdefault(k, train(best_sets[k], threshold=threshold, algo=algo, target=target))
+                    sub_trees.setdefault(k, train(best_sets[k], threshold=threshold, algo=algo,
+                                                  target=target, m=m, sample=sample))
                 return Node(feature=best_feature, algo=algo, children=sub_trees, target=target)
 
         else:
@@ -375,7 +383,7 @@ def prune(tree, threshold=0.0):
             diff = entropy(flat_set) - sum([entropy(s.dataset) for s in subtrees])
             base = 0.0
             for s in subtrees:
-                base -= len(s.dataset) / len(flat_set) * log(len(s.dataset) / len(flat_set))
+                base -= len(s.dataset) / len(flat_set) * np.log(len(s.dataset) / len(flat_set))
             diff = diff / base
 
         if diff < threshold:  # 信息增益较小, 实行剪枝
