@@ -29,7 +29,9 @@ Features:
 
 Random Forrest based on ml_decision_trees.py
 
-### ml_logistic_regression.py
+### 正则化逻辑回归
+`ml_logistic_regression.py`
+
 - basic logistic regression, solved with CVX
 - L1 & L2 penalized logistic regression, solved with CVX
 
