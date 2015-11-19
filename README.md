@@ -16,7 +16,12 @@ All-in-one training, testing and plot functions for the 3 common DTS algorithms:
 - C45
 - CART
 
-Missing values in both training and testing dataset will be handled automotically (broadcasting into all sub-branches to get weight results).
+Features:
+- Missing values in both training and testing dataset will be automotically broadcast into all sub-branches to get weight results.
+- Support of randomized training feature candidates in function train() to incorporate with Random Forrest algorithm.
+
+### ml_random_forrest.py
+Random Forrest based on ml_decision_trees.py
 
 ### ml_logistic_regression.py
 - basic logistic regression, optimized with CVX
@@ -31,9 +36,6 @@ SVM optimized with CVX for 3 kinds of kernels:
 ## To-Do 
 ### ml_ann.py
 Neurual Network optimized with gradient descent based on Andrew Ng's course.
-
-### ml_random_forrest.py
-Random Forrest based on ml_decision_trees.py
 
 ### ml_boosting.py
 Boosting for regression and classification (adaboost)
