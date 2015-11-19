@@ -45,14 +45,19 @@ SVM solved with CVX for 3 kinds of kernels:
 
 ## To-Do 
 ### 神经网络
-`ml_ann.py`
+`ml_neural_networks.py`
 
-Neurual Network solved with gradient descent based on Andrew Ng's course.
+Neural Networks solved with gradient descent based on Andrew Ng's course.
+
+### Adaboost 
+`ml_adaboost.py`
+
+Boosting for classification.
 
 ### 随机梯度加速器
-`ml_boosting.py`
+`ml_gbdt.py``
 
-Boosting for regression and classification (adaboost)
+Boosting for regression.
 
 ### SVD++拆分 
 `ml_cf_svd_plus.py`
