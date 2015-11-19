@@ -43,43 +43,45 @@ my_data = [['slashdot', 'USA', 'yes', 18, 'None'],
 # 定义节点, 同时支持ID3的多分和CART的二分, 作为所有决策树的组成对象
 class Node:
     def __init__(self, dataset=None, feature=None, algo='cart',
-                 cut=None, tb=None, fb=None, childs={}, target='classification'):
+                 cut=None, tb=None, fb=None, children={}, target='classification'):
+        self.algo = algo  # id3, c45, cart
         self.target = target  # 在train的时候进行赋值, 带到predict和plot
-        self.dataset = dataset  # 只有终端节点才有数据
         self.feature = feature  # 用于划分的特征index
-        self.algo = algo  # cart or id3
         self.cut = cut  # 二分分解点, 这个参数用于在预测是判断拆分类型
-        self.childs = childs  # 多分子节点
-        self.tb = tb  # 二分True节点
-        self.fb = fb  # 二分False节点
+        self.dataset = dataset  # 只有终端节点才有数据
+        self.children = children  # 多分支无序节点
+        self.tb = tb  # 二分True有序节点
+        self.fb = fb  # 二分False有序节点
 
 
-# 生成结果字典
+# 字典生成: key为y标签, value为样本数量
 def countgen(rows):
     dic = {}
     for row in rows:
-        r = len(row) - 1
+        r = len(row) - 1  # 结果在最后一列
         dic[row[r]] = dic.get(row[r], 0) + 1
     return dic
 
-# 返回结果字典中value最大的key值, 用于分类树的predict
+
+# 返回字典中value最大的key值, 用于分类树的predict
 def topkey(dict):
     key_tracker = None
     value_tracker = 0.0
     for k, v in dict.items():
         if v > value_tracker:
             key_tracker = k
+            value_tracker = v
     return key_tracker
 
 
 # 分类树：计算熵
-def entropy(rows):
+def entropy(rows, base=2):
     from math import log
     results = countgen(rows)
     ent = 0.0
     for r in results.keys():
         p = float(results[r]) / len(rows)
-        ent -= p * log(p) / log(2)  # 对数底也可以是e, 10
+        ent -= p * log(p) / log(base)
     return ent
 
 
@@ -102,25 +104,22 @@ def rss(rows):
 
 # 离散和连续变量: 二分函数
 def divide2(rows, feature, cut):
-    if isinstance(cut, int) or isinstance(cut, float):  # 判断离散或连续变量
+    if isinstance(cut, float) or isinstance(cut, int):  # 判断离散或连续变量
         def split_bool(row):
             return row[feature] >= cut
     else:
         def split_bool(row):
             return row[feature] == cut
-
-    tset = [row for row in rows if split_bool(row) or row[feature] is None]  # 空值样本同时发送到2个分支
-    fset = [row for row in rows if not split_bool(row) or row[feature] is None]
-    return tset, fset
+    # 空值样本同时发送到2个分支
+    t_set = [row for row in rows if split_bool(row) or row[feature] is None]
+    f_set = [row for row in rows if not split_bool(row) or row[feature] is None]
+    return t_set, f_set
 
 
 # 离散变量: 多分函数
 def divide3(rows, feature):
     if not isinstance(rows, (set, list)):  # 参数类型异常处理
         return None
-    if not type(feature) is int:
-        return None
-
     subset = {}
     for row in rows:
         subset.setdefault(row[feature], []).append(row)
@@ -128,11 +127,12 @@ def divide3(rows, feature):
 
 
 # 训练函数
-def train(rows, threshold=0.0, algo='cart', target='classification'):
+def train(rows, threshold=0.0, algo="cart", target="classification",
+          feature_index="all"):
     """
     递归生长思路:
     1. 只要当前数据满足继续划分的条件, 即将划分的数据递归转移到下层节点继续划分,
-    并在当前节点的childs或tb/fb属性里记录从属关系; 否则, 将数据留在当前节点,作为终端节点返回.
+    并在当前节点的children或tb/fb属性里记录从属关系; 否则, 将数据留在当前节点,作为终端节点返回.
     2. 每次划分的关键检查步骤: 当前数据的结果变量是否唯一, 如果唯一则没有必要划分; 当前特征的
     取值是否唯一, 如果唯一则无法继续划分.
     3. 终端节点直接返回数据集, 不计算结果
@@ -141,6 +141,7 @@ def train(rows, threshold=0.0, algo='cart', target='classification'):
     :param threshold: 信息增益或RSS减少量阈值
     :param algo: 算法类型
     :param target: 回归 / 判别
+    :param feature_index: "all"表示对所有feature遍历; list / tuple 限定遍历范围
     :return:
     """
     if not isinstance(rows, (set, list)):  # 参数异常处理
@@ -151,22 +152,26 @@ def train(rows, threshold=0.0, algo='cart', target='classification'):
     if len(countgen(rows)) <= 1:  # rows只有一种结果, 返回终端节点
         return Node(dataset=rows, target=target)
 
-    legal_param = [('cart', 'classification'),  # 参数algo与target组合的合法约束
+    legal_param = [('cart', 'classification'),
                    ('cart', 'regression'),  # 回归树仅应用于cart算法
                    ('id3', 'classification'),
                    ('c45', 'classification')]
     if (algo, target) not in legal_param:
-        print('illegal algo or target values')
+        print('illegal algorithm or target values')
 
     best_diff = 0.0  # 初始化追踪器
     best_feature = None
     best_sets = None
     best_cut = 0.0
 
-    num_features = len(rows[0]) - 1  # 特征个数
+    if feature_index == "all":
+        num_features = len(rows[0]) - 1
+        loop_index = range(num_features)
+    else:  # list / tuple 限定遍历的特征范围
+        loop_index = feature_index
 
     if algo == 'cart':  # cart划分
-        for f in range(num_features):  # 遍历特征
+        for f in loop_index:  # 遍历特征
             f_values = {}
             for row in rows:  # 获取特征的取值
                 if row[f] is not None:  # 空值不用于划分
@@ -175,26 +180,28 @@ def train(rows, threshold=0.0, algo='cart', target='classification'):
                 continue
             for value in f_values.keys():  # 遍历取值
                 tset, fset = divide2(rows, f, value)
-                if target == 'classification':  # 根据判别还是回归, 区分使用的评价划分的标准
+                if len(tset) == 0 or len(fset) == 0:
+                    continue  # 连续变量划分异常处理
+                if target == 'classification':  # 判别: 基尼系数
                     p = float(len(tset)) / len(rows)
                     diff = gini(rows) - p * gini(tset) - (1 - p) * gini(fset)
-                else:
+                else:  # 回归: 误差平方和
                     diff = rss(rows) - rss(tset) - rss(fset)
-                if diff > best_diff and len(tset) > 0 and len(fset) > 0:  # 出现新的最佳划分, 更新追踪器
+                if diff > best_diff:  # 出现新的最佳划分, 更新追踪器
                     best_diff = diff
                     best_feature = f
                     best_cut = value
                     best_sets = (tset, fset)
 
-        if best_diff >= threshold and len(best_sets[0]) > 0 and len(best_sets[1]) > 0:  # 应用最佳划分
-            tbranch = train(best_sets[0], threshold=threshold, algo=algo, target=target)
-            fbranch = train(best_sets[1], threshold=threshold, algo=algo, target=target)
-            return Node(feature=best_feature, algo=algo, cut=best_cut, tb=tbranch, fb=fbranch, target=target)
+        if best_diff >= threshold and best_sets is not None:  # 应用最佳划分
+            t_branch = train(best_sets[0], threshold=threshold, algo=algo, target=target)
+            f_branch = train(best_sets[1], threshold=threshold, algo=algo, target=target)
+            return Node(feature=best_feature, algo=algo, cut=best_cut, tb=t_branch, fb=f_branch, target=target)
         else:
-            return Node(dataset=rows, target=target)  # 无法划分时, 返回为终端节点
+            return Node(dataset=rows, target=target)  # 未找到feature, 或diff未达到划分标准
 
     else:  # id3 & c45 划分, 只做分类树, 但要判断变量是否离散
-        for f in range(num_features):  # 遍历特征
+        for f in loop_index:  # 遍历特征
             if isinstance(rows[0][f], int) or isinstance(rows[0][f], float):  # 连续变量, 二分
                 f_values = {}
                 for row in rows:  # 获取特征的取值
@@ -249,17 +256,17 @@ def train(rows, threshold=0.0, algo='cart', target='classification'):
 
         if best_diff >= threshold:  # 使用最佳特征和划分点进行划分
             if isinstance(rows[0][best_feature], int) or isinstance(rows[0][best_feature], float):  # 连续变量递归
-                tbranch = train(best_sets[0], threshold=threshold, algo=algo, target=target)
-                fbranch = train(best_sets[1], threshold=threshold, algo=algo, target=target)
-                return Node(feature=best_feature, algo=algo, cut=best_cut, tb=tbranch, fb=fbranch, target=target)
+                t_branch = train(best_sets[0], threshold=threshold, algo=algo, target=target)
+                f_branch = train(best_sets[1], threshold=threshold, algo=algo, target=target)
+                return Node(feature=best_feature, algo=algo, cut=best_cut, tb=t_branch, fb=f_branch, target=target)
             else:  # 离散变量递归
                 sub_trees = {}
                 for k in best_sets.keys():
                     sub_trees.setdefault(k, train(best_sets[k], threshold=threshold, algo=algo, target=target))
-                return Node(feature=best_feature, algo=algo, childs=sub_trees, target=target)
+                return Node(feature=best_feature, algo=algo, children=sub_trees, target=target)
 
         else:
-            return Node(dataset=rows)  # 无法划分时，返回为终端节点
+            return Node(dataset=rows)  # 未找到feature, 或diff未达到划分标准
 
 
 # 递归预测函数
@@ -271,15 +278,15 @@ def predict(tree, row, out='value'):
             if tree.target == 'classification':  # 分类树: 返回最多结果分类
                 return topkey(countgen(tree.dataset))
             else:  # 回归树: 返回结果均值
-                return sum([row[len(row) -1 ] for row in tree.dataset]) / len(tree.dataset)
+                return sum([row[len(row) - 1] for row in tree.dataset]) / len(tree.dataset)
 
     if tree.cut is None:  # 多分支节点
-        if row[tree.feature] in tree.childs.keys():  # 样本feature在训练集范围(已排除空值情况)
-            return predict(tree.childs[row[tree.feature]], row, out=out)  # 递归predict子节点
+        if row[tree.feature] in tree.children.keys():  # 样本feature在训练集范围(已排除空值情况)
+            return predict(tree.children[row[tree.feature]], row, out=out)  # 递归predict子节点
         else:  # 样本feature不在训练集, 等同于空值处理, 同时发送到所有分支, 并在必要时对结果加权处理
             comb = []
-            for k in tree.childs.keys():
-                temp_tree = predict(tree.childs[k], row, out='raw')
+            for k in tree.children.keys():
+                temp_tree = predict(tree.children[k], row, out='raw')
                 comb.extend(temp_tree * len(temp_tree))
             if out == 'raw':
                 return comb
@@ -287,7 +294,7 @@ def predict(tree, row, out='value'):
                 if tree.target == 'classification':  # 分类树: 返回最多结果分类
                     return topkey(countgen(comb))
                 else:  # 回归树: 返回结果均值
-                    return sum([row[len(row) -1 ] for row in comb]) / len(tree.dataset)
+                    return sum([row[len(row) - 1] for row in comb]) / len(tree.dataset)
     else:  # 二分支节点
         if row[tree.feature] is not None:  # 样本feature值非空, 递归处理
             if isinstance(tree.cut, int) or isinstance(tree.cut, float):  # 连续变量
@@ -312,7 +319,7 @@ def predict(tree, row, out='value'):
                 if tree.target == 'classification':  # 分类树: 返回最多结果分类
                     return topkey(countgen(comb))
                 else:  # 回归树: 返回结果均值
-                    return sum([row[len(row) -1 ] for row in comb]) / len(tree.dataset)
+                    return sum([row[len(row) - 1] for row in comb]) / len(tree.dataset)
 
 
 # 递归文本树图
@@ -331,49 +338,48 @@ def plottree(tree, indent=' '):
             plottree(tree.fb, indent + '  ')
         else:  # 多分支节点
             print(str(tree.feature) + ':' + 'split')
-            for k in tree.childs.keys():
+            for k in tree.children.keys():
                 print(indent + str(k) + '->', end='')
-                plottree(tree.childs[k], indent + '  ')
+                plottree(tree.children[k], indent + '  ')
 
 
 # 递归剪枝
-def prune(tree, threshhold=0.0):
-    if tree.dataset is not None:  # 由于Node类没有定义父节点, 因此只能从上到下操作, 不能从终端节点剪枝
+def prune(tree, threshold=0.0):
+    if tree.dataset is not None:  # Node类没有定义父节点, 只能从上到下, 不能从终端节点剪枝
         return None
 
     subtrees = []  # 获取所有子Node对象
     if tree.tb is not None:  # 二分支节点
         subtrees = [tree.tb, tree.fb]
-    if len(tree.childs) != 0:  # 多分支节点
-        subtrees = [v for k, v in tree.childs.items()]
+    if len(tree.children) != 0:  # 多分支节点
+        subtrees = [v for k, v in tree.children.items()]
 
     toggle = 0  # 只要有一个非终端子节点, toggle会赋值为1
     for s in subtrees:
         if s.dataset is None:
-            prune(s, threshhold=threshhold)  # 非终端子节点, 函数递归应用到子节点
-            toggle =1
+            prune(s, threshold=threshold)  # 非终端子节点, 函数递归应用到子节点
+            toggle = 1
 
-    if toggle ==0:  # 所有子节点都是终端节点, 开始剪枝
-        flatset = [] # 所有子节点的数据合并列表
+    if toggle == 0:  # 所有子节点都是终端节点, 开始剪枝
+        flat_set = []  # 所有子节点的数据合并列表
         for s in subtrees:
-            flatset.extend(s.dataset)
-
+            flat_set.extend(s.dataset)
         if tree.algo == 'cart':  # 根据算法获取信息增益
             if tree.target == 'classification':
-                diff = gini(flatset) - sum([gini(s.dataset) for s in subtrees])
+                diff = gini(flat_set) - sum([gini(s.dataset) for s in subtrees])
             else:
-                diff = rss(flatset) - sum([rss(s.dataset) for s in subtrees])
+                diff = rss(flat_set) - sum([rss(s.dataset) for s in subtrees])
         elif tree.algo == 'id3':
-            diff = entropy(flatset) - sum([entropy(s.dataset) for s in subtrees])
+            diff = entropy(flat_set) - sum([entropy(s.dataset) for s in subtrees])
         else:
-            diff = entropy(flatset) - sum([entropy(s.dataset) for s in subtrees])
+            diff = entropy(flat_set) - sum([entropy(s.dataset) for s in subtrees])
             base = 0.0
             for s in subtrees:
-                base -= len(s.dataset) / len(flatset) * log(len(s.dataset) / len(flatset))
+                base -= len(s.dataset) / len(flat_set) * log(len(s.dataset) / len(flat_set))
             diff = diff / base
 
-        if diff < threshhold:  # 信息增益较小, 实行剪枝
-            tree.tb, tree.fb, tree.childs, tree.cut, tree.features = None, None, None, None, None
-            tree.dataset = flatset
+        if diff < threshold:  # 信息增益较小, 实行剪枝
+            tree.tb, tree.fb, tree.children, tree.cut, tree.features = None, None, None, None, None
+            tree.dataset = flat_set
         else:  # 否则停止剪枝
             return None
