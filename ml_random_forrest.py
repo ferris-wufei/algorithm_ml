@@ -48,7 +48,7 @@ class RandomForrest:
         for r in rows_new:
             sub_results = []
             for t in self.trees:
-                predicted = dts.predict(t, r, out="value")
+                predicted = dts.predict_single(t, r, out="value")
                 sub_results.append(predicted)
             if self.target == "classification":  # 判别: 投票
                 tmp_dict = {}
