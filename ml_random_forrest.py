@@ -18,15 +18,14 @@ class RandomForrest:
         self.rows = rows
         self.trees = []
         self.target = target  # 判别或回归
-        self.m = len(rows)  # 样本数量
+        self.m = len(rows)  # 样本容量
 
-    def train(self, num_trees=200, num_features=2, threshold=0.0, algo="cart"):
+    def train(self, num_trees=200, num_features=2, threshold=0.0):
         """
-        逐个训练
+        逐个训练, 采用cart算法
         :param num_trees: 树的数量
         :param num_features: 每个划分随机抽取的候选特征数量
         :param threshold: 传递给dts.train
-        :param algo: 传递给dts.train
         :return:
         """
         for i in range(num_trees):
@@ -35,7 +34,7 @@ class RandomForrest:
             sampled = [self.rows[i] for i in sample_indices]
             # 根据ml_decision_trees.train的设定, 当m=num_features时, 即使sample=True, 也会执行bagging
             tree = dts.train(sampled, threshold=threshold,
-                             algo=algo, target=self.target, m=num_features, sample=True)
+                             target=self.target, m=num_features, sample=True)
             self.trees.append(tree)
         print("training complete on {0} trees".format(num_trees))
 
