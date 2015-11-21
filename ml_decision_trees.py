@@ -1,23 +1,15 @@
 # -*- coding: utf-8 -*-
 """Module docstring.
 
-@Author: Ferris
-
-说明: 在同一组函数实现ID3，C45，CART三种算法的分类与回归树，实现同时处理二分支和多分支节点，连续和离散变量，并自动处理空值.
-
-函数功能:
-1. train 生长
-2. predict 预测
-3. prune 剪枝
-4. plottree 绘图
-
-假设: 数据集的最后一列为结果。
-
-To-Do:
-1. (Done)plot函数
-2. (Done)predict函数
-3. (Done)prune函数(剪枝)
-4. (Done)bug: 如果rows只有2个记录，且唯一的差别是当中一条的某个字段为空，一条非空，按照这个字段划分时, 会导致死循环
+author: Ferris
+update: 2015-11-21
+function: 在同一组函数实现ID3，C45，CART三种算法的分类与回归树，实现同时处理二分支和多分支节点，连续和离散变量，并自动处理空值
+premise: 数据集的最后一列为y标签
+to-do: 简化train函数:
+1. CART拆分出来
+2. ID3与C45保持合并
+3. ID3每一步消耗一个特征
+4. 控制树的深度
 
 """
 import numpy as np
@@ -55,8 +47,11 @@ class Node:
         self.fb = fb  # 二分False有序节点
 
 
-# 字典生成: key为y标签, value为样本数量
 def countgen(rows):
+    """
+    :param rows:
+    :return: 字典: key为y标签, value为样本数量
+    """
     dic = {}
     for row in rows:
         r = len(row) - 1  # 结果在最后一列
@@ -64,8 +59,11 @@ def countgen(rows):
     return dic
 
 
-# 返回字典中value最大的key值, 用于分类树的predict
 def topkey(dict):
+    """
+    :param dict: 字典
+    :return: dict中value最大的key值, 用于分类树的predict
+    """
     key_tracker = None
     value_tracker = 0.0
     for k, v in dict.items():
@@ -75,8 +73,12 @@ def topkey(dict):
     return key_tracker
 
 
-# 分类树：计算熵
 def entropy(rows, base=2):
+    """
+    :param rows:
+    :param base: 对数底, 可以用欧拉常数或2
+    :return: 经验熵
+    """
     from math import log
     results = countgen(rows)
     ent = 0.0
@@ -86,8 +88,11 @@ def entropy(rows, base=2):
     return ent
 
 
-# 分类树：计算基尼系数
 def gini(rows):
+    """
+    :param rows:
+    :return: 基尼系数
+    """
     results = countgen(rows)
     gini = 1
     for r in results.keys():
@@ -95,16 +100,25 @@ def gini(rows):
     return gini
 
 
-# 回归树：计算误差平方和
 def rss(rows):
+    """
+    :param rows:
+    :return: 误差平方和
+    """
     data = [row[len(row) - 1] for row in rows]
     mean = sum(data) / len(data)
     rs = sum([(row[len(row) - 1] - mean) ** 2 for row in rows])
     return rs
 
 
-# 离散和连续变量: 二分函数
 def divide2(rows, feature, cut):
+    """
+    离散和连续变量的左右划分
+    :param rows:
+    :param feature: 特征列序号
+    :param cut: 划分点
+    :return: 左右数据集
+    """
     if isinstance(cut, float) or isinstance(cut, int):  # 判断离散或连续变量
         def split_bool(row):
             return row[feature] >= cut
@@ -117,8 +131,13 @@ def divide2(rows, feature, cut):
     return t_set, f_set
 
 
-# 离散变量: 多分函数
 def divide3(rows, feature):
+    """
+    离散变量按唯一值划分
+    :param rows:
+    :param feature: 特征列序号
+    :return: 字典: key为特征的唯一值, value为对应的数据集
+    """
     if not isinstance(rows, (set, list)):  # 参数类型异常处理
         return None
     subset = {}
@@ -127,11 +146,10 @@ def divide3(rows, feature):
     return subset
 
 
-# 训练函数
 def train(rows, threshold=0.0, algo="cart", target="classification",
           m=2, sample=False):
     """
-    递归生长思路:
+    训练函数:
     1. 只要当前数据满足继续划分的条件, 即将划分的数据递归转移到下层节点继续划分,
     并在当前节点的children或tb/fb属性里记录从属关系; 否则, 将数据留在当前节点,作为终端节点返回.
     2. 每次划分的关键检查步骤: 当前数据的结果变量是否唯一, 如果唯一则没有必要划分; 当前特征的
@@ -277,10 +295,17 @@ def train(rows, threshold=0.0, algo="cart", target="classification",
             return Node(dataset=rows)  # 未找到feature, 或diff未达到划分标准
 
 
-# 递归预测函数
-def predict(tree, row, out='value'):
+def predict_single(tree, row, out="value"):
+    """
+    单样本递归预测
+    :param tree: Node对象组合成的树对象
+    :param row: 单样本
+    :param out: "value"返回预测y标签, "row"返回预测终端节点的数据集,
+    如果发送到了多个分支, 则返回 (终端节点数据集 * 数据集长度) 合并后的列表, 用于结果加权
+    :return:
+    """
     if tree.dataset is not None:  # 已经到达终端节点
-        if out == 'raw':  # 返回原始数据(在ensemble方法中会用到)
+        if out == 'raw':  # 返回原始数据
             return tree.dataset  # 注意: 当预测样本有空值时, 返回的raw数据包含多个不同分支的乘数增量数据
         else:  # 返回判断结果
             if tree.target == 'classification':  # 分类树: 返回最多结果分类
@@ -290,11 +315,11 @@ def predict(tree, row, out='value'):
 
     if tree.cut is None:  # 多分支节点
         if row[tree.feature] in tree.children.keys():  # 样本feature在训练集范围(已排除空值情况)
-            return predict(tree.children[row[tree.feature]], row, out=out)  # 递归predict子节点
+            return predict_single(tree.children[row[tree.feature]], row, out=out)  # 递归predict子节点
         else:  # 样本feature不在训练集, 等同于空值处理, 同时发送到所有分支, 并在必要时对结果加权处理
             comb = []
             for k in tree.children.keys():
-                temp_tree = predict(tree.children[k], row, out='raw')
+                temp_tree = predict_single(tree.children[k], row, out='raw')
                 comb.extend(temp_tree * len(temp_tree))
             if out == 'raw':
                 return comb
@@ -302,24 +327,25 @@ def predict(tree, row, out='value'):
                 if tree.target == 'classification':  # 分类树: 返回最多结果分类
                     return topkey(countgen(comb))
                 else:  # 回归树: 返回结果均值
-                    return sum([row[len(row) - 1] for row in comb]) / len(tree.dataset)
+                    return sum([row[len(row) - 1] for row in comb]) / len(comb)
+
     else:  # 二分支节点
         if row[tree.feature] is not None:  # 样本feature值非空, 递归处理
             if isinstance(tree.cut, int) or isinstance(tree.cut, float):  # 连续变量
                 if row[tree.feature] >= tree.cut:
-                    return predict(tree.tb, row, out=out)
+                    return predict_single(tree.tb, row, out=out)
                 else:
-                    return predict(tree.fb, row, out=out)
+                    return predict_single(tree.fb, row, out=out)
             else:  # 离散变量
                 if row[tree.feature] == tree.cut:
-                    return predict(tree.tb, row, out=out)
+                    return predict_single(tree.tb, row, out=out)
                 else:
-                    return predict(tree.fb, row, out=out)
+                    return predict_single(tree.fb, row, out=out)
         else:  # 样本feature值为空, 将raw结果按照分支长度复制如comb, 再根据out参数返回
             comb = []
-            temp_tree = predict(tree.tb, row, out='raw')
+            temp_tree = predict_single(tree.tb, row, out='raw')
             comb.extend(temp_tree * len(temp_tree))
-            temp_tree = predict(tree.fb, row, out='raw')
+            temp_tree = predict_single(tree.fb, row, out='raw')
             comb.extend(temp_tree * len(temp_tree))
             if out == 'raw':
                 return comb
@@ -327,11 +353,31 @@ def predict(tree, row, out='value'):
                 if tree.target == 'classification':  # 分类树: 返回最多结果分类
                     return topkey(countgen(comb))
                 else:  # 回归树: 返回结果均值
-                    return sum([row[len(row) - 1] for row in comb]) / len(tree.dataset)
+                    return sum([row[len(row) - 1] for row in comb]) / len(comb)
 
 
-# 递归文本树图
+def predict(tree, rows, out="value"):
+    """
+    多样本预测
+    :param tree: Node对象组合成的树对象
+    :param rows: 多样本
+    :param out: 传递给predict_single
+    :return:
+    """
+    predicted = []
+    for r in rows:
+        pred = predict_single(tree, r, out=out)
+        predicted.append(pred)
+    return predicted
+
+
 def plottree(tree, indent=' '):
+    """
+    文本递归绘图
+    :param tree:
+    :param indent: 缩进符号
+    :return:
+    """
     if tree.dataset is not None:  # 终端节点
         if tree.target == 'classification':
             print(topkey(countgen(tree.dataset)))  # 分类树: 返回最大分类
@@ -351,12 +397,17 @@ def plottree(tree, indent=' '):
                 plottree(tree.children[k], indent + '  ')
 
 
-# 递归剪枝
 def prune(tree, threshold=0.0):
-    if tree.dataset is not None:  # Node类没有定义父节点, 只能从上到下, 不能从终端节点剪枝
+    """
+    递归剪枝, 注意由于Node类没有定义父节点属性, 每次递归只能对当前树从根节点开始剪枝
+    :param tree:
+    :param threshold: 损失阈值
+    :return:
+    """
+    if tree.dataset is not None:
         return None
 
-    subtrees = []  # 获取所有子Node对象
+    subtrees = []  # 获取所有子节点
     if tree.tb is not None:  # 二分支节点
         subtrees = [tree.tb, tree.fb]
     if len(tree.children) != 0:  # 多分支节点
@@ -365,7 +416,7 @@ def prune(tree, threshold=0.0):
     toggle = 0  # 只要有一个非终端子节点, toggle会赋值为1
     for s in subtrees:
         if s.dataset is None:
-            prune(s, threshold=threshold)  # 非终端子节点, 函数递归应用到子节点
+            prune(s, threshold=threshold)  # 非终端子节点, 对其递归剪枝
             toggle = 1
 
     if toggle == 0:  # 所有子节点都是终端节点, 开始剪枝
@@ -389,5 +440,6 @@ def prune(tree, threshold=0.0):
         if diff < threshold:  # 信息增益较小, 实行剪枝
             tree.tb, tree.fb, tree.children, tree.cut, tree.features = None, None, None, None, None
             tree.dataset = flat_set
-        else:  # 否则停止剪枝
+            prune(tree, threshold=threshold)  # 重新从根节点开始剪枝
+        else:  # 停止剪枝
             return None
