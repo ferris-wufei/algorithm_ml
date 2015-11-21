@@ -5,6 +5,11 @@ author: Ferris
 update: 2015-11-21
 function: 在同一组函数实现ID3，C45，CART三种算法的分类与回归树，实现同时处理二分支和多分支节点，连续和离散变量，并自动处理空值
 premise: 数据集的最后一列为y标签
+to-do: 简化train函数:
+1. CART拆分出来
+2. ID3与C45保持合并
+3. ID3每一步消耗一个特征
+4. 控制树的深度
 
 """
 import numpy as np
@@ -290,11 +295,11 @@ def train(rows, threshold=0.0, algo="cart", target="classification",
             return Node(dataset=rows)  # 未找到feature, 或diff未达到划分标准
 
 
-def predict(tree, row, out="value"):
+def predict_single(tree, row, out="value"):
     """
-    递归预测函数
+    单样本递归预测
     :param tree: Node对象组合成的树对象
-    :param row: 单条记录
+    :param row: 单样本
     :param out: "value"返回预测y标签, "row"返回预测终端节点的数据集,
     如果发送到了多个分支, 则返回 (终端节点数据集 * 数据集长度) 合并后的列表, 用于结果加权
     :return:
@@ -310,11 +315,11 @@ def predict(tree, row, out="value"):
 
     if tree.cut is None:  # 多分支节点
         if row[tree.feature] in tree.children.keys():  # 样本feature在训练集范围(已排除空值情况)
-            return predict(tree.children[row[tree.feature]], row, out=out)  # 递归predict子节点
+            return predict_single(tree.children[row[tree.feature]], row, out=out)  # 递归predict子节点
         else:  # 样本feature不在训练集, 等同于空值处理, 同时发送到所有分支, 并在必要时对结果加权处理
             comb = []
             for k in tree.children.keys():
-                temp_tree = predict(tree.children[k], row, out='raw')
+                temp_tree = predict_single(tree.children[k], row, out='raw')
                 comb.extend(temp_tree * len(temp_tree))
             if out == 'raw':
                 return comb
@@ -328,19 +333,19 @@ def predict(tree, row, out="value"):
         if row[tree.feature] is not None:  # 样本feature值非空, 递归处理
             if isinstance(tree.cut, int) or isinstance(tree.cut, float):  # 连续变量
                 if row[tree.feature] >= tree.cut:
-                    return predict(tree.tb, row, out=out)
+                    return predict_single(tree.tb, row, out=out)
                 else:
-                    return predict(tree.fb, row, out=out)
+                    return predict_single(tree.fb, row, out=out)
             else:  # 离散变量
                 if row[tree.feature] == tree.cut:
-                    return predict(tree.tb, row, out=out)
+                    return predict_single(tree.tb, row, out=out)
                 else:
-                    return predict(tree.fb, row, out=out)
+                    return predict_single(tree.fb, row, out=out)
         else:  # 样本feature值为空, 将raw结果按照分支长度复制如comb, 再根据out参数返回
             comb = []
-            temp_tree = predict(tree.tb, row, out='raw')
+            temp_tree = predict_single(tree.tb, row, out='raw')
             comb.extend(temp_tree * len(temp_tree))
-            temp_tree = predict(tree.fb, row, out='raw')
+            temp_tree = predict_single(tree.fb, row, out='raw')
             comb.extend(temp_tree * len(temp_tree))
             if out == 'raw':
                 return comb
@@ -349,6 +354,21 @@ def predict(tree, row, out="value"):
                     return topkey(countgen(comb))
                 else:  # 回归树: 返回结果均值
                     return sum([row[len(row) - 1] for row in comb]) / len(comb)
+
+
+def predict(tree, rows, out="value"):
+    """
+    多样本预测
+    :param tree: Node对象组合成的树对象
+    :param rows: 多样本
+    :param out: 传递给predict_single
+    :return:
+    """
+    predicted = []
+    for r in rows:
+        pred = predict_single(tree, r, out=out)
+        predicted.append(pred)
+    return predicted
 
 
 def plottree(tree, indent=' '):
