@@ -1,8 +1,8 @@
 # 常用机器学习算法原型代码 
 
-Prototype coding for common Machine Learning algorithms with Python 3. 
+Self-contained prototype coding for common Machine Learning algorithms in Python 3. 
 
-This repository is created for personal practice purpose. I'll bring more mathematical brief behind the algorithms.
+This repository is created for practice purpose. I'll bring more mathematical brief behind the algorithms.
 
 ## Finished
 ### 协同过滤与SVD推荐
@@ -43,18 +43,18 @@ SVM solved with CVX for 3 kinds of kernels:
 - gaussian kernel
 - polynomial kernel
 
+### AdaBoost
+`ml_adaboost.py`
+
+AdaBoost based on ml_decision_trees.py.
+
 ## To-Do 
 ### 神经网络
 `ml_neural_networks.py`
 
 Neural Networks solved with gradient descent based on Andrew Ng's course.
 
-### Adaboost 
-`ml_adaboost.py`
-
-Boosting for classification.
-
-### 随机梯度加速器
+### Gradient Boosting 
 `ml_gbdt.py`
 
 Boosting for regression.
