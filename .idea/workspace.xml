@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="17e2b596-d75c-49d6-b1de-424a4d992003" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ml_decision_tree_dev.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ml_decision_trees.py" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ml_adaboost.py" afterPath="$PROJECT_DIR$/ml_adaboost.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ml_decision_tree.py" afterPath="$PROJECT_DIR$/ml_decision_tree.py" />
     </list>
     <ignored path="algorithm_ml.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -28,8 +27,8 @@
       <file leaf-file-name="ml_adaboost.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ml_adaboost.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.24">
-              <caret line="15" column="24" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
+            <state vertical-scroll-proportion="0.304">
+              <caret line="19" column="25" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="25" />
               <folding>
                 <element signature="e#140#158#0" expanded="true" />
               </folding>
@@ -37,11 +36,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ml_decision_tree_dev.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ml_decision_tree_dev.py">
+      <file leaf-file-name="ml_decision_tree.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ml_decision_tree.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="6" column="10" selection-start-line="6" selection-start-column="10" selection-end-line="6" selection-end-column="10" />
+              <caret line="198" column="45" selection-start-line="198" selection-start-column="45" selection-end-line="198" selection-end-column="45" />
               <folding />
             </state>
           </provider>
@@ -56,9 +55,10 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/ml_decision_trees.py" />
-        <option value="$PROJECT_DIR$/ml_adaboost.py" />
         <option value="$PROJECT_DIR$/ml_random_forrest.py" />
         <option value="$PROJECT_DIR$/ml_decision_tree_dev.py" />
+        <option value="$PROJECT_DIR$/ml_decision_tree.py" />
+        <option value="$PROJECT_DIR$/ml_adaboost.py" />
       </list>
     </option>
   </component>
@@ -190,18 +190,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ml_decision_tree_dev.py">
+    <entry file="file://$PROJECT_DIR$/ml_decision_tree.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="6" column="10" selection-start-line="6" selection-start-column="10" selection-end-line="6" selection-end-column="10" />
+          <caret line="198" column="45" selection-start-line="198" selection-start-column="45" selection-end-line="198" selection-end-column="45" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ml_adaboost.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.24">
-          <caret line="15" column="24" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
+        <state vertical-scroll-proportion="0.304">
+          <caret line="19" column="25" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="25" />
           <folding>
             <element signature="e#140#158#0" expanded="true" />
           </folding>

@@ -2,7 +2,7 @@
 """Module docstring.
 
 author: Ferris
-update: 2015-11-21
+update: 2015-11-22
 function: 在同一组函数实现ID3，C45，CART三种算法的分类与回归树，实现同时处理二分支和多分支节点，连续和离散变量，并自动处理空值
 premise: 数据集的最后一列为y标签
 to-do: 简化train函数:
@@ -144,21 +144,6 @@ def divide3(rows, feature):
     for row in rows:
         subset.setdefault(row[feature], []).append(row)
     return subset
-
-
-def del_index(rows, i):
-    """
-    删除rows每一条中index=i的记录
-    :param rows:
-    :param i: 特征index
-    :return:
-    """
-    if i not in range(len(rows[0])):
-        print("index out of range")
-        return None
-    for r in rows:
-        del r[i]
-        return None
 
 
 def train_cart(rows, th=0.0, target="classification", d=None, m=2, sample=False):
