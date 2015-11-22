@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="17e2b596-d75c-49d6-b1de-424a4d992003" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ml_adaboost.py" afterPath="$PROJECT_DIR$/ml_adaboost.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ml_decision_tree.py" afterPath="$PROJECT_DIR$/ml_decision_tree.py" />
-    </list>
+    <list default="true" id="17e2b596-d75c-49d6-b1de-424a4d992003" name="Default" comment="" />
     <ignored path="algorithm_ml.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,8 +24,8 @@
       <file leaf-file-name="ml_adaboost.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ml_adaboost.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.304">
-              <caret line="19" column="25" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="25" />
+            <state vertical-scroll-proportion="0.296">
+              <caret line="55" column="29" selection-start-line="55" selection-start-column="29" selection-end-line="55" selection-end-column="29" />
               <folding>
                 <element signature="e#140#158#0" expanded="true" />
               </folding>
@@ -200,8 +197,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ml_adaboost.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.304">
-          <caret line="19" column="25" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="25" />
+        <state vertical-scroll-proportion="0.296">
+          <caret line="55" column="29" selection-start-line="55" selection-start-column="29" selection-end-line="55" selection-end-column="29" />
           <folding>
             <element signature="e#140#158#0" expanded="true" />
           </folding>
