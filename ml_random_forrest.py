@@ -2,7 +2,7 @@
 """Module docstring.
 
 author: ferris
-update: 2015-11-19
+update: 2015-11-22
 function: 基于ml_decision_trees.py的随机森林算法. 主要步骤:
 1. bootstrap抽样
 2. 训练: 随机化候选特征, 逐个训练树, 保存到森林
@@ -10,7 +10,7 @@ function: 基于ml_decision_trees.py的随机森林算法. 主要步骤:
 
 """
 import numpy as np
-import ml_decision_trees as dts
+import ml_decision_tree as dts
 
 
 class RandomForrest:
@@ -20,12 +20,12 @@ class RandomForrest:
         self.target = target  # 判别或回归
         self.m = len(rows)  # 样本容量
 
-    def train(self, num_trees=200, num_features=2, threshold=0.0):
+    def train(self, num_trees=200, num_features=2, th=0.0):
         """
         逐个训练, 采用cart算法
         :param num_trees: 树的数量
         :param num_features: 每个划分随机抽取的候选特征数量
-        :param threshold: 传递给dts.train
+        :param th: 传递给dts.train
         :return:
         """
         for i in range(num_trees):
@@ -33,8 +33,8 @@ class RandomForrest:
             sample_indices = np.random.choice(range(self.m), size=self.m, replace=True)
             sampled = [self.rows[i] for i in sample_indices]
             # 根据ml_decision_trees.train的设定, 当m=num_features时, 即使sample=True, 也会执行bagging
-            tree = dts.train(sampled, threshold=threshold,
-                             target=self.target, m=num_features, sample=True)
+            tree = dts.train_cart(sampled, th=th,
+                                  target=self.target, m=num_features, sample=True)
             self.trees.append(tree)
         print("training complete on {0} trees".format(num_trees))
 
