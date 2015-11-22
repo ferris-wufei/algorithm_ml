@@ -13,21 +13,22 @@ This repository is created for practice purpose. I'll bring more mathematical br
 - SVD approach for recommending, solved with ALS (for implicit scores)
 
 ### 三种经典决策树
-`ml_decesion_trees.py`
+`ml_decesion_tree.py`
 
-All-in-one training, testing and plot functions for the 3 common DTS algorithms:
+Training, testing and plot functions for the 3 common DTS algorithms:
 - ID3
 - C45
 - CART
 
 Features:
+- Argument `d` in `train_cart()` and `train_id3()` function to control the tree depth.
+- Argument `m` and `sample` in `train_cart()` and `train_id3()` function to control the number of randomized feature candidates.
 - Missing values in both training and testing dataset will be automotically broadcast into all sub-branches to get weight results.
-- Support of randomized training feature candidates in function train() to incorporate with Random Forrest algorithm.
 
 ### 随机森林 
 `ml_random_forrest.py`
 
-Random Forrest based on ml_decision_trees.py
+Random Forrest based on ml_decision_tree.py
 
 ### 正则化逻辑回归
 `ml_logistic_regression.py`
@@ -46,7 +47,7 @@ SVM solved with CVX for 3 kinds of kernels:
 ### AdaBoost
 `ml_adaboost.py`
 
-AdaBoost based on ml_decision_trees.py.
+AdaBoost based on ml_decision_tree.py. Argument `d` in `train()` function to control tree depth for classifier weakness.
 
 ## To-Do 
 ### 神经网络
