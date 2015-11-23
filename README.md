@@ -64,3 +64,20 @@ Boosting for regression.
 `ml_cf_svd_plus.py`
 
 Re-arrange ml_cf_svd.py, store CF and SVD methods separately.
+
+### SVR
+`ml_svr.py`
+
+Support Vector Regression.
+
+### Association Analysis
+`ml_apriori.py`
+
+Association Analysis for ShoppingCart problem.
+
+### K-means
+`ml_kmeans.py`
+
+K-means clustering.
+
+> side project: data pre-processing toolkit including PCA, standardize, Box-Cox, collinearity removal.
