@@ -70,9 +70,9 @@ class LR:
         """
         y_pred = self.predict(x_new, threshold=threshold)
         y_new_trans = np.array([[i] for i in y_new])
-        error_ratio = np.sum(y_new_trans != y_pred) / y_new_trans.shape[0]
-        print("test error rate: {0}".format(error_ratio))
-        return error_ratio
+        err_rate = np.sum(y_new_trans != y_pred) / y_new_trans.shape[0]
+        print("test error rate: {0}".format(err_rate))
+        return err_rate
 
 # test
 # x1 = np.random.multivariate_normal([0, 0], [[1, 0], [0, 1]], 50)
