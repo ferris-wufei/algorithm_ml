@@ -28,7 +28,7 @@ Features:
 ### 随机森林 
 `ml_random_forrest.py`
 
-Random Forrest based on ml_decision_tree.py
+Random Forrest based on `ml_decision_tree.py`.
 
 ### 正则化逻辑回归
 `ml_logistic_regression.py`
@@ -47,20 +47,20 @@ SVM solved with CVX for 3 kinds of kernels:
 ### AdaBoost
 `ml_adaboost.py`
 
-AdaBoost based on ml_decision_tree.py. Argument `d` in `train()` function to control tree depth for classifier weakness.
+AdaBoost based on `ml_decision_tree.py`. Argument `d` in `train()` function to control tree depth for classifier weakness.
 
+### Gradient Boosting 
+`ml_gbdt.py`
+
+Gradient Boosting Decision Tree based on `ml_decision_tree.py`. In fact this is a instance of a broader concept of Gradient Boosting. GBDT takes the loss function of SSE, which is common for regression trees.
+
+### SVD++拆分 
 ## To-Do 
 ### 神经网络
 `ml_neural_networks.py`
 
 Neural Networks solved with gradient descent based on Andrew Ng's course.
 
-### Gradient Boosting 
-`ml_gbdt.py`
-
-Boosting for regression.
-
-### SVD++拆分 
 `ml_cf_svd_plus.py`
 
 Re-arrange ml_cf_svd.py, store CF and SVD methods separately.
