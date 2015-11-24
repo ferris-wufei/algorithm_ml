@@ -143,9 +143,9 @@ class SVM:
         :return: 错误率
         """
         y_pred = self.predict(x_test)
-        error_ratio = 1.0 * np.sum(y_test != y_pred) / len(y_test)
-        print("test error rate: {0}".format(error_ratio))  # 暂时只输出错误率
-        return error_ratio
+        err_rate = 1.0 * np.sum(y_test != y_pred) / len(y_test)
+        print("test error rate: {0}".format(err_rate))  # 暂时只输出错误率
+        return err_rate
 
 
 # # generate test data a and label b

@@ -17,23 +17,6 @@ import numpy as np
 import ml_decision_tree as dts
 
 
-def update_y(rows, y_new):
-    """
-    替换数据集rows的y值, 返回一个新的数据集
-    :param rows: 数据集
-    :param y_new: 新的y值, list-like
-    :return:
-    """
-    updated = []
-    col_id = len(rows[0]) - 1  # 列数
-    n_rows = len(rows)  # 行数
-    for l in range(n_rows):
-        r_new = rows[l][:col_id]
-        r_new.append(y_new[l])
-        updated.append(r_new)
-    return updated
-
-
 class GBDT:
     def __init__(self, rows):
         self.rows = rows
@@ -50,6 +33,23 @@ class GBDT:
         :param k: 树的数量
         :return:
         """
+
+        def update_y(rows, y_new):
+            """
+            替换数据集rows的y值, 返回一个新的数据集
+            :param rows: 数据集
+            :param y_new: 新的y值, list-like
+            :return:
+            """
+            updated = []
+            col_id = len(rows[0]) - 1  # 列数
+            n_rows = len(rows)  # 行数
+            for l in range(n_rows):
+                r_new = rows[l][:col_id]
+                r_new.append(y_new[l])
+                updated.append(r_new)
+            return updated
+
         for i in range(k):
             # 用残差更新训练数据的y值
             self.rows_updated = update_y(self.rows_updated, self.resid)
@@ -91,6 +91,7 @@ class GBDT:
         error = np.array(predicted) - np.array(actual)
         mse = np.dot(error, error) / len(error)
         print("test mse: {0}".format(str(mse)))
+        return mse
 
 
 # # test

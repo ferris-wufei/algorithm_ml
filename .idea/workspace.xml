@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="17e2b596-d75c-49d6-b1de-424a4d992003" name="Default" comment="" />
+    <list default="true" id="17e2b596-d75c-49d6-b1de-424a4d992003" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ml_adaboost.py" afterPath="$PROJECT_DIR$/ml_adaboost.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ml_gbdt.py" afterPath="$PROJECT_DIR$/ml_gbdt.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ml_logsitic_regression.py" afterPath="$PROJECT_DIR$/ml_logsitic_regression.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ml_svm.py" afterPath="$PROJECT_DIR$/ml_svm.py" />
+    </list>
     <ignored path="algorithm_ml.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,13 +26,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ml_adaboost.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/ml_adaboost.py">
+      <file leaf-file-name="ml_svm.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ml_svm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="1.0029851">
-              <caret line="56" column="22" selection-start-line="56" selection-start-column="22" selection-end-line="56" selection-end-column="22" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="29" column="5" selection-start-line="29" selection-start-column="5" selection-end-line="29" selection-end-column="5" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ml_gbdt.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/ml_gbdt.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.25074628">
+              <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
               <folding>
-                <element signature="e#140#158#0" expanded="true" />
+                <element signature="e#389#407#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -44,8 +59,10 @@
         <option value="$PROJECT_DIR$/ml_decision_trees.py" />
         <option value="$PROJECT_DIR$/ml_decision_tree_dev.py" />
         <option value="$PROJECT_DIR$/ml_decision_tree.py" />
-        <option value="$PROJECT_DIR$/ml_adaboost.py" />
         <option value="$PROJECT_DIR$/ml_random_forrest.py" />
+        <option value="$PROJECT_DIR$/ml_adaboost.py" />
+        <option value="$PROJECT_DIR$/ml_logsitic_regression.py" />
+        <option value="$PROJECT_DIR$/ml_svm.py" />
         <option value="$PROJECT_DIR$/ml_gbdt.py" />
       </list>
     </option>
@@ -183,6 +200,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#203#221#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -203,37 +223,56 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/ml_logsitic_regression.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="74" column="23" selection-start-line="74" selection-start-column="23" selection-end-line="74" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/ml_random_forrest.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.248">
-          <caret line="78" column="50" selection-start-line="78" selection-start-column="50" selection-end-line="78" selection-end-column="50" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="1" column="20" selection-start-line="1" selection-start-column="20" selection-end-line="1" selection-end-column="20" />
+          <folding>
+            <element signature="e#203#221#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ml_decision_tree.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.9960199">
+        <state vertical-scroll-proportion="3.4895523">
           <caret line="442" column="20" selection-start-line="442" selection-start-column="20" selection-end-line="442" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ml_adaboost.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="67" column="29" selection-start-line="67" selection-start-column="29" selection-end-line="67" selection-end-column="29" />
+          <folding>
+            <element signature="e#140#158#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ml_svm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="29" column="5" selection-start-line="29" selection-start-column="5" selection-end-line="29" selection-end-column="5" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ml_gbdt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.7014925">
-          <caret line="95" column="8" selection-start-line="95" selection-start-column="8" selection-end-line="95" selection-end-column="8" />
+        <state vertical-scroll-proportion="0.25074628">
+          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
           <folding>
             <element signature="e#389#407#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ml_adaboost.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.0029851">
-          <caret line="56" column="22" selection-start-line="56" selection-start-column="22" selection-end-line="56" selection-end-column="22" />
-          <folding>
-            <element signature="e#140#158#0" expanded="true" />
           </folding>
         </state>
       </provider>

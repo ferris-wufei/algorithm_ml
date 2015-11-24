@@ -84,6 +84,7 @@ class AdaBoost:
         actual = [r[l] for r in rows_test]
         err = sum(np.array(predicted) != np.array(actual))
         err_rate = float(err) / len(rows_test)
+        print("error rate: {0}".format(str(err_rate)))
         return err_rate
 
 
