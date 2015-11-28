@@ -135,6 +135,8 @@ class GMM:
         """
         if len(x_new.shape) == 1:
             x_new = np.array([x_new])  # 1d array to 2d array (nested)
+        if self.std is True:
+            x_new = (x_new - self.mean) / self.dev
         y_new = []
         for r in x_new:
             density = [get_dens(self.mu[i], self.sigma[i], r) for i in range(self.k)]
@@ -142,14 +144,14 @@ class GMM:
         return np.array(y_new)
 
 # test
-train_x = np.random.randn(100, 5)
-G = GMM(train_x, std=False)
-print(G.y)
-G.train(th=0.01)
-print(G.mu)
-print(G.sigma)
-print(G.y)
-
-test_x = np.random.rand(20, 5)
-test_y = G.predict(test_x)
-print(test_y)
+# train_x = np.random.randn(100, 5)
+# G = GMM(train_x, std=False)
+# print(G.y)
+# G.train(th=0.01)
+# print(G.mu)
+# print(G.sigma)
+# print(G.y)
+#
+# test_x = np.random.rand(20, 5)
+# test_y = G.predict(test_x)
+# print(test_y)

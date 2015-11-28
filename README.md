@@ -1,12 +1,14 @@
-# 常用机器学习算法原型代码 
+# Machine Learning Algorithms
 
 Self-contained prototype coding for common Machine Learning algorithms in Python 3. 
 
-This repository is created for practice purpose. I'll bring more mathematical brief behind the algorithms.
+This repository is created for practice purpose and written in pure Python. Alhough I did with Numpy as much as possible, speed performance should be considered if you want to implement on big data.
+
+In addition to the code comments, I've kept Markdown notes with mathematical details of all the algorithms here. Please email me at `wu.fei@outlook.com` if you need any of them.
 
 ## Finished
 
-### 协同过滤与SVD推荐
+### Collaborative Filtering and SVD++
 
 ` ml_cf_svd.py`
  
@@ -14,7 +16,7 @@ This repository is created for practice purpose. I'll bring more mathematical br
 - SVD approach for recommending, solved with gradient descent (for explicit scores)
 - SVD approach for recommending, solved with ALS (for implicit scores)
 
-### 三种经典决策树
+### Decision Tree
 
 `ml_decesion_tree.py`
 
@@ -28,20 +30,20 @@ Features:
 - Argument `m` and `sample` in `train_cart()` and `train_id3()` function to control the number of randomized feature candidates.
 - Missing values in both training and testing dataset will be automotically broadcast into all sub-branches to get weight results.
 
-### 随机森林 
+### Random Forrest
 
 `ml_random_forrest.py`
 
 Random Forrest based on `ml_decision_tree.py`.
 
-### 正则化逻辑回归
+### Regularized Logistic Regression
 
 `ml_logistic_regression.py`
 
 - basic logistic regression, solved with CVX
 - L1 & L2 penalized logistic regression, solved with CVX
 
-### 支持向量机
+### Support Vector Machine
 
 `ml_svm.py`
 
@@ -68,6 +70,12 @@ Gradient Boosting Decision Tree based on `ml_decision_tree.py`. In fact this is 
 
 K-Means clustering initializing centroids randomly and stopping when average of centroid movement falls below a threshold.
 
+### Gaussian Mixture Model
+
+`ml_gmm.py`
+
+Gaussian Mixture Model solved with EM algorithm. The initializing setup is to assign samples into k populations, and then initialize the gaussian distribution parameters with the estimate of each population. The stopping criteria is average of Euclidean distance between new and old mu vector below some threshold.
+
 ## To-Do 
 
 ### 神经网络
@@ -81,8 +89,6 @@ Neural Networks solved with gradient descent based on Andrew Ng's course.
 `ml_cf_svd_plus.py`
 
 Re-arrange ml_cf_svd.py, store CF and SVD methods separately.
-
-### EM
 
 ### FP-tree
 
