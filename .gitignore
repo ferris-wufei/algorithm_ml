@@ -58,4 +58,5 @@ target/
 
 # Pycharm
 .DS_Store
-.idea/
+*.xml
+*.iml
