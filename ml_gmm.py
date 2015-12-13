@@ -143,7 +143,7 @@ class GMM:
             y_new.append(np.argmax(np.array(density)))
         return np.array(y_new)
 
-# test
+# test procedure
 # train_x = np.random.randn(100, 5)
 # G = GMM(train_x, std=False)
 # print(G.y)
@@ -152,6 +152,6 @@ class GMM:
 # print(G.sigma)
 # print(G.y)
 #
-# test_x = np.random.rand(20, 5)
+# test_x = np.random.randn(20, 5)
 # test_y = G.predict(test_x)
 # print(test_y)
