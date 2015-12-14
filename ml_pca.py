@@ -60,6 +60,9 @@ class PCA:
         num_comp = self.l.cumsum().searchsorted(pos) + 1
         # calculate the first components
         z = self.e[range(num_comp)]
+        # standardize with same mu and dev as training samples
+        if self.std is True:
+            x_new = (x_new - self.mu) / self.dev
         y_new = np.dot(x_new, z.T)
         return y_new
 
