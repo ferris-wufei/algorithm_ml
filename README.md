@@ -10,7 +10,7 @@ In addition to the code comments, I've kept Markdown notes with mathematical det
 
 ### Collaborative Filtering and SVD++
 
-` ml_cf_svd.py`
+` ml_CF.py`
  
 - Collaborate Filtering (for explicit scores)
 - SVD approach for recommending, solved with gradient descent (for explicit scores)
@@ -18,7 +18,7 @@ In addition to the code comments, I've kept Markdown notes with mathematical det
 
 ### Decision Tree
 
-`ml_decesion_tree.py`
+`ml_DTS.py`
 
 Training, testing and plot functions for the 3 common DTS algorithms:
 - ID3
@@ -32,20 +32,20 @@ Features:
 
 ### Random Forrest
 
-`ml_random_forrest.py`
+`ml_RF.py`
 
-Random Forrest based on `ml_decision_tree.py`.
+Random Forrest based on `ml_DTS.py`.
 
 ### Regularized Logistic Regression
 
-`ml_logistic_regression.py`
+`ml_LR.py`
 
 - basic logistic regression, solved with CVX
 - L1 & L2 penalized logistic regression, solved with CVX
 
 ### Support Vector Machine
 
-`ml_svm.py`
+`ml_SVM.py`
 
 SVM solved with CVX for 3 kinds of kernels:
 - linear kernel
@@ -54,42 +54,37 @@ SVM solved with CVX for 3 kinds of kernels:
 
 ### AdaBoost
 
-`ml_adaboost.py`
+`ml_Adaboost.py`
 
 AdaBoost based on `ml_decision_tree.py`. Argument `d` in `train()` function to control tree depth for classifier weakness.
 
 ### Gradient Boosting 
 
-`ml_gbdt.py`
+`ml_GBDT.py`
 
 Gradient Boosting Decision Tree based on `ml_decision_tree.py`. In fact this is a instance of a broader concept of Gradient Boosting. GBDT takes the loss function of SSE, which is common for regression trees.
 
 ### K-Means Clustering
 
-`ml_kmeans.py`
+`ml_KM.py`
 
 K-Means clustering initializing centroids randomly and stopping when average of centroid movement falls below a threshold.
 
 ### Gaussian Mixture Model
 
-`ml_gmm.py`
+`ml_EM.py`
 
 Gaussian Mixture Model solved with EM algorithm. The initializing setup is to assign samples into k populations, and then initialize the gaussian distribution parameters with the estimate of each population. The stopping criteria is average of Euclidean distance between new and old mu vector below some threshold.
 
+### Neural Networks
+
+`ml_NN.py`
+
+Multi-layer Neural Networks solved with `Back-Propagation` algorithm. Added penalizing parameter in cost function. `Gradient Descent` is performed on all training samples during each iteration, and the speed could be improved with `Stochastic Gradient Descent`. Check *reference 2* in the code comment for more details.
+
 ## To-Do 
 
-### 神经网络
+### Split SVD++ from `ml_CF.py`
 
-`ml_neural_networks.py`
+`ml_SVD_PLUS.py`
 
-Neural Networks solved with gradient descent based on Andrew Ng's course.
-
-### SVD++拆分
-
-`ml_cf_svd_plus.py`
-
-Re-arrange ml_cf_svd.py, store CF and SVD methods separately.
-
-### FP-tree
-
-> side project: data pre-processing toolkit including PCA, standardize, Box-Cox, collinearity removal.
