@@ -9,12 +9,12 @@ gradient boosting, in which the loos function is sum of squared errors.
 对于广义的GB, 梯度(伪残差)和回归树的分裂条件都要修改.
 ref:
 1. 李航: 统计学习方法 P151
-2. The Elements of Statiscial Learning P380
+2. The Elements of Statistical Learning P380
 
 """
 
 import numpy as np
-import ml_decision_tree as dts
+import ml_DTS as dts
 
 
 class GBDT:

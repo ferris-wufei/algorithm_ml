@@ -10,7 +10,7 @@ function: 基于ml_decision_trees.py的随机森林算法. 主要步骤:
 
 """
 import numpy as np
-import ml_decision_tree as dts
+import ml_DTS as dts
 
 
 class RandomForrest:
