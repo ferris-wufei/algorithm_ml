@@ -132,7 +132,7 @@ class NN:
             print("cost before update: {0}".format(str(cost)))
             # gradient descent
             for k in range(len(self.W)):
-                self.W[k] -= alpha * (self.delta_W[k] / self.m + lamb * self.W[k])
+                self.W[k] -= alpha * (self.delta_W[k] / self.m + lamb * self.W[k] / self.m)
                 self.b[k] -= alpha * (self.delta_b[k] / self.m)
             # reset gradients
             self.delta_W = [np.zeros((i, j)) for i, j in zip(self.layers[1:], self.layers[:-1])]
