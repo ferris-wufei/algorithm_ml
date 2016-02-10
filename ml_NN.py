@@ -89,7 +89,7 @@ class NN:
         :return: update the deltas for each layer, and accumulate gradients for W & b
         """
         # gradients of output layer
-        self.delta[-1] = (self.a[-1] - yj) # * sigmoid_prime(self.z[-1])
+        self.delta[-1] = (self.a[-1] - yj)  # * sigmoid_prime(self.z[-1])
         self.delta_b[-1] += self.delta[-1]
         self.delta_W[-1] += np.dot(self.delta[-1], self.a[-2].T)
 
@@ -112,33 +112,37 @@ class NN:
         regular_term = 0.5 * lamb * sum([np.sum(i ** 2) for i in self.W]) / self.m
         return cross_entropy + regular_term
 
-    def train(self, lamb=0.0001, alpha=0.05, maxiter=100):
+    def train(self, lamb=0.0001, eta=0.05, epochs=100, batch_size=10):
         """
-        what's the appropriate stopping criteria???
+        stochastic gradient descent with back-propagation
         :param lamb: regularization
-        :param alpha: gradient step
-        :param maxiter: number of iterations
+        :param eta: gradient step
+        :param epochs: number of iterations
+        :param batch_size: number of samples to accumulate each gradient
         :return:
         """
-        for i in range(maxiter):
-            # fp & bp for each sample
-            for j in range(self.m):
-                self.fp(self.x[j])
-                self.current_y[j] = self.a[-1]
-                self.bp(self.y[j])
-            # evaluate cost
+        # index used for batch division
+        idx = np.arange(self.m)
+        # stochastic gradient descent
+        for i in range(epochs):
+            np.random.shuffle(idx)
+            batches = [idx[k:k + batch_size] for k in np.arange(0, self.m, batch_size)]
+            for batch in batches:
+                # fp & bp for each sample
+                for j in batch:
+                    self.fp(self.x[j])
+                    self.current_y[j] = self.a[-1]
+                    self.bp(self.y[j])
+                # gradient descent
+                for k in range(len(self.W)):
+                    self.W[k] -= eta * (self.delta_W[k] / self.m + lamb * self.W[k] / self.m)
+                    self.b[k] -= eta * (self.delta_b[k] / self.m)
+                # reset gradients to zeros
+                self.delta_W = [np.zeros((i, j)) for i, j in zip(self.layers[1:], self.layers[:-1])]
+                self.delta_b = [np.zeros((i, 1)) for i in self.layers[1:]]
+            # evaluate cost for each epoch
             cost = self.get_cost(lamb=lamb)
-            print("cost before update: {0}".format(str(cost)))
-            # gradient descent
-            for k in range(len(self.W)):
-                self.W[k] -= alpha * (self.delta_W[k] / self.m + lamb * self.W[k] / self.m)
-                self.b[k] -= alpha * (self.delta_b[k] / self.m)
-            # reset gradients
-            self.delta_W = [np.zeros((i, j)) for i, j in zip(self.layers[1:], self.layers[:-1])]
-            self.delta_b = [np.zeros((i, 1)) for i in self.layers[1:]]
-            # shrink step
-            # alpha *= 0.99
-
+            print("cost after epoch {0}: {1}".format(str(i + 1), str(cost)))
         print("training complete")
 
     def predict(self, x_new):
@@ -173,14 +177,14 @@ class NN:
         return err_rate
 
 # test procedure
-x1 = np.random.multivariate_normal([0, 0, 0], [[2, 0, 1], [0, 3, 0], [1, 0, 2]], 50)
-x2 = np.random.multivariate_normal([1, 0.5, 2], [[1, 0.5, 0.5], [0.5, 2, 1], [0.5, 1, 1]], 50)
-y1 = np.repeat(1, 50)
-y2 = np.repeat(0, 50)
-train_x = np.row_stack((x1, x2))
-train_y = np.concatenate((y1, y2))
-
-N = NN(train_x, train_y)
-N.train(alpha=10, maxiter=500, lamb=0.0001)
-N.predict(train_x)
-N.test(train_x, train_y)
+# x1 = np.random.multivariate_normal([0, 0, 0], [[2, 0, 1], [0, 3, 0], [1, 0, 2]], 50)
+# x2 = np.random.multivariate_normal([1, 0.5, 2], [[1, 0.5, 0.5], [0.5, 2, 1], [0.5, 1, 1]], 50)
+# y1 = np.repeat(1, 50)
+# y2 = np.repeat(0, 50)
+# train_x = np.row_stack((x1, x2))
+# train_y = np.concatenate((y1, y2))
+#
+# N = NN(train_x, train_y, hl=[20])
+# N.train(eta=.5, epochs=400)
+# N.predict(train_x)
+# N.test(train_x, train_y)
