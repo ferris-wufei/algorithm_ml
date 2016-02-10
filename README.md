@@ -80,7 +80,7 @@ Gaussian Mixture Model solved with EM algorithm. The initializing setup is to as
 
 `ml_NN.py`
 
-Multi-layer Neural Networks solved with `Back-Propagation` algorithm. Added penalizing parameter in cost function. `Gradient Descent` is performed on all training samples during each iteration, and the speed could be improved with `Stochastic Gradient Descent`. Check *reference 2* in the code comment for more details.
+Multi-layer Neural Networks solved with `Back-Propagation` algorithm. Using `Cross Entropy` as cost function and `Stochastic Gradient Descent` for training. Note I've converted the y label to `0 / 1` vectors of the same length of unique y levels.
 
 ## To-Do 
 
