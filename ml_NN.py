@@ -50,23 +50,21 @@ class NN:
         # record the fp result
         self.current_y = self.y * 0.0
 
-        # initialize transforming matrices and biases
-        mu = 0.0
-        sigma = 0.01
-        self.W = [np.random.randn(i, j) for i, j in zip(self.layers[1:], self.layers[:-1])]
+        # initialize weights and biases
+        self.W = [np.random.randn(i, j) / np.sqrt(i) for i, j in zip(self.layers[1:], self.layers[:-1])]
         self.b = [np.random.randn(i, 1) for i in self.layers[1:]]
 
         # initialize gradients
         self.delta_W = [np.zeros((i, j)) for i, j in zip(self.layers[1:], self.layers[:-1])]
         self.delta_b = [np.zeros((i, 1)) for i in self.layers[1:]]
 
-        # initialize values of activations
+        # initialize activations
         self.a = [np.zeros((i, 1)) for i in self.layers]
         
-        # initialize values of z scores
+        # initialize zs
         self.z = [np.zeros((i, 1)) for i in self.layers[1:]]
 
-        # initialize values of deltas
+        # initialize deltas
         self.delta = [np.zeros((i, 1)) for i in self.layers[1:]]
 
     def fp(self, xj):
@@ -91,7 +89,7 @@ class NN:
         :return: update the deltas for each layer, and accumulate gradients for W & b
         """
         # gradients of output layer
-        self.delta[-1] = (self.a[-1] - yj) * sigmoid_prime(self.z[-1])
+        self.delta[-1] = (self.a[-1] - yj) # * sigmoid_prime(self.z[-1])
         self.delta_b[-1] += self.delta[-1]
         self.delta_W[-1] += np.dot(self.delta[-1], self.a[-2].T)
 
@@ -105,13 +103,14 @@ class NN:
 
     def get_cost(self, lamb=0.0001):
         """
+        using cross_entropy as cost instead of squared errors
         attention: keep lamb small otherwise the training will never converge
         :param lamb: regularization
         :return: value of cost function under current W & b
         """
-        jwb = 0.5 * np.sum((self.current_y - self.y) ** 2) / self.m + \
-            0.5 * lamb * sum([np.sum(i ** 2) for i in self.W])
-        return jwb
+        cross_entropy = - np.sum(self.y * np.log(self.current_y) + (1 - self.y) * np.log(1 - self.current_y)) / self.m
+        regular_term = 0.5 * lamb * sum([np.sum(i ** 2) for i in self.W]) / self.m
+        return cross_entropy + regular_term
 
     def train(self, lamb=0.0001, alpha=0.05, maxiter=100):
         """
@@ -174,14 +173,14 @@ class NN:
         return err_rate
 
 # test procedure
-# x1 = np.random.multivariate_normal([0, 0, 0], [[2, 0, 1], [0, 3, 0], [1, 0, 2]], 50)
-# x2 = np.random.multivariate_normal([1, 0.5, 2], [[1, 0.5, 0.5], [0.5, 2, 1], [0.5, 1, 1]], 50)
-# y1 = np.repeat(1, 50)
-# y2 = np.repeat(0, 50)
-# train_x = np.row_stack((x1, x2))
-# train_y = np.concatenate((y1, y2))
-#
-# N = NN(train_x, train_y)
-# N.train(alpha=10, maxiter=1500, lamb=0.00001)
-# N.predict(train_x)
-# N.test(train_x, train_y)
+x1 = np.random.multivariate_normal([0, 0, 0], [[2, 0, 1], [0, 3, 0], [1, 0, 2]], 50)
+x2 = np.random.multivariate_normal([1, 0.5, 2], [[1, 0.5, 0.5], [0.5, 2, 1], [0.5, 1, 1]], 50)
+y1 = np.repeat(1, 50)
+y2 = np.repeat(0, 50)
+train_x = np.row_stack((x1, x2))
+train_y = np.concatenate((y1, y2))
+
+N = NN(train_x, train_y)
+N.train(alpha=10, maxiter=500, lamb=0.0001)
+N.predict(train_x)
+N.test(train_x, train_y)
