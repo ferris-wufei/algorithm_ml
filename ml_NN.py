@@ -30,20 +30,20 @@ class NN:
     def __init__(self, x, y, target="classification", hl=[4, 5]):
         self.x = x
         self.y = y
-        # convert multi-response label to vector
+        # convert response label to 0 / 1 vectors
         self.uni = np.unique(self.y)
-        if len(self.uni) > 2:
-            self.y = np.array([np.where(self.uni == i, 1, 0) for i in self.y])
+        self.y = np.array([np.where(self.uni == i, 1, 0) for i in self.y])
 
-        # shape and problem
+        # shape
         self.m, self.n = self.x.shape
+
+        # working on classification problem for now
         self.target = target
 
         # number of activation units for each layer (excl bias)
         layers = hl.copy()
         layers.insert(0, self.n)
-        ol = 1 if len(self.uni) <= 2 else int(len(self.uni))
-        layers.append(ol)
+        layers.append(int(len(self.uni)))
         self.layers = layers
         self.L = len(self.layers)
 
@@ -73,7 +73,7 @@ class NN:
         :param xj: single sample
         :return: update self.a
         """
-        # convert input layer(1st activation to column array)
+        # convert input layer (1st activation to column array)
         self.a[0] = xj[np.newaxis].T
 
         # update z & activations of each layer
