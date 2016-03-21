@@ -40,7 +40,7 @@ class KM:
             self.x = (self.x - self.mu) / self.dev
 
         self.y = np.zeros(self.m)  # labels
-        self.rand_id = np.random.choice(np.arange(self.m), size=self.k)
+        self.rand_id = np.random.choice(np.arange(self.m), size=self.k, replace=False)
         self.centroid = self.x[self.rand_id, :]  # initialize centroid
         self.cluster = [[] for i in range(k)]  # initialize cluster
         self.dist = np.zeros((self.m, self.k))  # m*k matrix of each sample, each centroid
